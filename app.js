@@ -46,8 +46,9 @@ app.post('/register', async (req, res) => {
 
 
 
-app.get('/next', jwtCheck, async (req, res) => {
+app.get('/next', async (req, res) => {
   const result = await retrieveSeqAndIncremement(req.headers['authorization']);
+  console.log(result.current);
   res.json({'current': result.current});
 })
 

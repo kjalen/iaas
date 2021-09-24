@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "nodemonConfig": {
+    "ignore": ["cypress/*"]
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "cy:run": "cypress run",
+    "test": "npm start & wait-on http://localhost:8080 & cypress open",
+    "start": "nodemon app.js",
+    "cy:open": "cypress open"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kjalen Hansen",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -27,5 +32,9 @@
     "mongoose": "^6.0.7",
     "morgan": "^1.9.1",
     "nodemon": "^2.0.12"
+  },
+  "devDependencies": {
+    "cypress": "^8.4.1",
+    "wait-on": "^6.0.0"
   }
 }
