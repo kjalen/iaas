@@ -54,14 +54,14 @@ app.get('/next', jwtCheck, async (req, res) => {
 
 app.get('/current', jwtCheck, async (req, res) => {
   const result = await findByToken(req.headers['authorization']);
-  res.status(200).json({'current': result.sequence.current});
+  res.json({'current': result.sequence.current});
 })
 
 app.put('/reset', jwtCheck, async (req, res) => {
   try {
     const result = await resetSeq(req.headers['authorization'])
     // decided between sending an empty body with 204, but i thought sending the new value as a confirmation was more useful
-    res.json({'current': result});
+    res.status(201).json({'current': result});
   } catch (err) {
     res.sendStatus(500);
   }
@@ -70,8 +70,8 @@ app.put('/reset', jwtCheck, async (req, res) => {
 app.put('/modify/:newvalue', jwtCheck, async (req, res) => {
   try {
     const result = await retrieveSeqAndModify(req.headers['authorization'], req.params.newvalue);
-    // decided between sending an empty body with 204, but i thought sending the new value as a confirmation was more useful
-    res.json(result);
+    // decided between sending an empty body with 204, but i thought sending the new object as a confirmation was more useful
+    res.status(201).json(result);
   } catch (err) {
     res.sendStatus(500);
   }
@@ -81,35 +81,30 @@ app.put('/modifyinc/:newinc', jwtCheck, async (req, res) => {
   try {
     const result = await retrieveSeqAndModifyInc(req.headers['authorization'], req.params.newinc)
     // decided between sending an empty body with 204, but i thought sending the new value as a confirmation was more useful
-    res.send(result.toString())
+    res.status(201).json(result)
   } catch (err) {
     res.sendStatus(500)
   }
 })
 
-app.get('/getByToken', async (req, res) => {
-  const token = req.headers['access-token']
-  res.send(await findByToken(token))
-});
-
 app.get('/', async (req, res) => {
-  res.send(await getAll());
+  res.json(await getAll());
 });
 
 
 
 // this doesnt work
-app.post('/login', async (req, res) => {
-  getAuth().then(data => {
-    loginUser(req.body, data.access_token).then(result => {
-      if (result) {
-        res.status(403).send('incorrect username/password')
-      } else {
-        res.status(200).send(data.access_token)
-      }
-    })
-  });
-});
+// app.post('/login', async (req, res) => {
+//   getAuth().then(data => {
+//     loginUser(req.body, data.access_token).then(result => {
+//       if (result) {
+//         res.status(403).send('incorrect username/password')
+//       } else {
+//         res.status(200).send(data.access_token)
+//       }
+//     })
+//   });
+// });
 
 // start the in-memory MongoDB instance
 startDatabase().then(async () => {

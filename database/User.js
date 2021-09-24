@@ -76,7 +76,7 @@ exports.retrieveAndModifyInc = async (user, newValue) => {
   doc.save((err) => {
     if (err) console.error(err);
   });
-  return newValue;
+  return doc.sequence;
 }
 
 
