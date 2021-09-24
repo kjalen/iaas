@@ -6,11 +6,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const { startDatabase } = require('./database/mongo');
-const { getAll, findByToken, registerUser, loginUser, retrieveSeqAndIncremement, retrieveSeqAndModify, retrieveSeqAndModifyInc, resetSeq } = require('./database/UserDataService');
+const { getAll, findByToken, registerUser, loginUser, retrieveSeqAndIncremement, retrieveSeqAndModify, retrieveSeqAndModifyInc, resetSeq } = require('./services/UserDataService');
 var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 const errorController = require('./controller/error.controller');
-// defining the Express app
 const app = express();
 
 var jwtCheck = jwt({
@@ -46,9 +45,8 @@ app.post('/register', async (req, res) => {
 
 
 
-app.get('/next', async (req, res) => {
+app.get('/next',jwtCheck, async (req, res) => {
   const result = await retrieveSeqAndIncremement(req.headers['authorization']);
-  console.log(result.current);
   res.json({'current': result.current});
 })
 
@@ -88,24 +86,10 @@ app.put('/modifyinc/:newinc', jwtCheck, async (req, res) => {
   }
 })
 
-app.get('/', async (req, res) => {
+// mainly for debugging, gets entire db
+app.get('/',jwtCheck, async (req, res) => {
   res.json(await getAll());
 });
-
-
-
-// this doesnt work
-// app.post('/login', async (req, res) => {
-//   getAuth().then(data => {
-//     loginUser(req.body, data.access_token).then(result => {
-//       if (result) {
-//         res.status(403).send('incorrect username/password')
-//       } else {
-//         res.status(200).send(data.access_token)
-//       }
-//     })
-//   });
-// });
 
 // start the in-memory MongoDB instance
 startDatabase().then(async () => {

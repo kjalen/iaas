@@ -56,7 +56,6 @@ exports.retrieveSeqAndIncremement = async (user) => {
     return currentVal
 
   } catch (err) {
-    console.log('err! ' + err);
     return err;
   }
 }
@@ -73,6 +72,8 @@ exports.retrieveAndModify = async (user, newValue) => {
 exports.retrieveAndModifyInc = async (user, newValue) => {
   const doc = await User.findById(user._id);
   doc.sequence.increment = parseInt(newValue)
+  // need to increment current because the next /next has to take into account the new incrementer
+  doc.sequence.current += doc.sequence.increment
   doc.save((err) => {
     if (err) console.error(err);
   });

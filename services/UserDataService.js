@@ -1,8 +1,8 @@
 // ./src/database/ids.js
-const { getDatabase } = require('./mongo');
+const { getDatabase } = require('../database/mongo');
 const { ObjectID } = require('mongodb');
-const UserModel = require('./User')
-const dbHandler = require('./db-handler')
+const UserModel = require('../database/User')
+const dbHandler = require('../database/db-handler')
 const Bcrypt = require("bcryptjs");
 
 

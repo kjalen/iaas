@@ -21,12 +21,6 @@ return fetch(url, {
         headers: {'Content-Type': 'application/json'}
     }).then(res => res.json())
 
-    // return fetch(url, {method: method, headers: headers}).then(r => {
-    //     if (r.ok) {
-    //         return r.json()
-    //     }
-    // }).catch(error => {console.log(error);})
-
 }
 
 module.exports = { getAuth }
