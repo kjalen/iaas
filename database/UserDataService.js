@@ -14,19 +14,42 @@ async function getAll() {
 }
 
 async function findByToken(token) {
-  console.log('token is ' + token);
 
   token = token.replace('Bearer ', '')
-  console.log('token is! ' + token);
-  return await UserModel.getUserByToken(token)
+  try {
+    const user = await UserModel.getUserByToken(token)
+    return user;
+  }
+  catch (err) {
+    return ('err! ' + err)
+  }
 }
 
 async function findByEmail(email) {
   return await UserModel.getUserByEmail(email)
 }
 
-async function retrieveSeqAndIncremement(user) {
-  return await UserModel.retrieveSeqAndIncremement(user)
+// async function retrieveSeqAndIncremement(user) {
+//   return await UserModel.retrieveSeqAndIncremement(user)
+// }
+
+async function retrieveSeqAndIncremement(token) {
+  const user = await findByToken(token)
+  const result = await UserModel.retrieveSeqAndIncremement(user)
+  return result
+}
+
+
+async function retrieveSeqAndModify(token, newValue) {
+  const user = await findByToken(token)
+  const result = await  UserModel.retrieveAndModify(user, newValue)
+  return result;
+}
+
+async function retrieveSeqAndModifyInc(token, newValue) {
+  const user = await findByToken(token)
+  const result = await  UserModel.retrieveAndModifyInc(user, newValue)
+  return result;
 }
 
 
@@ -41,21 +64,20 @@ async function registerUser(user, token) {
 async function loginUser(user, token) {
   dbHandler.connect()
   findByEmail(user.email).then(result => {
-    if(!Bcrypt.compareSync(user.password, result.password)){
+    if (!Bcrypt.compareSync(user.password, result.password)) {
       return UserModel.userLogin(user)
-    }else{
+    } else {
       return false;
     }
   })
 }
 
-async function verifyUser(user) {
-
-}
 module.exports = {
   registerUser,
   getAll,
   findByToken,
   loginUser,
-  retrieveSeqAndIncremement
+  retrieveSeqAndIncremement,
+  retrieveSeqAndModify,
+  retrieveSeqAndModifyInc
 };
