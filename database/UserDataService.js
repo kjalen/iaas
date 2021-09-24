@@ -42,13 +42,19 @@ async function retrieveSeqAndIncremement(token) {
 
 async function retrieveSeqAndModify(token, newValue) {
   const user = await findByToken(token)
-  const result = await  UserModel.retrieveAndModify(user, newValue)
+  const result = await UserModel.retrieveAndModify(user, newValue)
   return result;
+}
+
+async function resetSeq(token) {
+  const user = await findByToken(token)
+  const result = await UserModel.reset(user)
+  return result.current;
 }
 
 async function retrieveSeqAndModifyInc(token, newValue) {
   const user = await findByToken(token)
-  const result = await  UserModel.retrieveAndModifyInc(user, newValue)
+  const result = await UserModel.retrieveAndModifyInc(user, newValue)
   return result;
 }
 
@@ -58,7 +64,8 @@ async function registerUser(user, token) {
   let hashedPass = Bcrypt.hashSync(user.password, 10);
   user.password = hashedPass
   user.access_token = token
-  return UserModel.createUser(user)
+  const result = await UserModel.createUser(user)
+  return result;
 }
 
 async function loginUser(user, token) {
@@ -79,5 +86,6 @@ module.exports = {
   loginUser,
   retrieveSeqAndIncremement,
   retrieveSeqAndModify,
-  retrieveSeqAndModifyInc
+  retrieveSeqAndModifyInc,
+  resetSeq
 };

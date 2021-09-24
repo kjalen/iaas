@@ -12,8 +12,8 @@ const User = mongoose.model('Users', userSchema);
 
 exports.createUser = (p_user) => {
   db.getDatabase()
-  const user = new User(p_user)
-
+  const user = new User(p_user);
+  const returnVal = user.access_token;
   return user.save();
 };
 
@@ -35,14 +35,25 @@ exports.getUserByEmail = (email) => {
   return User.findOne({ email: email })
 }
 
+exports.reset = async (user) => {
+  const doc = await User.findById(user._id);
+  doc.sequence.current = doc.sequence.start
+  doc.save((err) => {
+    if (err) console.error(err);
+  });
+  return doc.sequence.toObject()
+}
 
 exports.retrieveSeqAndIncremement = async (user) => {
   try {
+    // get user object in db
     const doc = await User.findById(user._id);
-    const currentVal = doc.sequence.current;
+    // save current user object to variable, to be returned
+    const currentVal = doc.sequence.toObject();
+    // increment current value by adding it to iterator
     doc.sequence.current += doc.sequence.increment;
     doc.save();
-    return currentVal;
+    return currentVal
 
   } catch (err) {
     console.log('err! ' + err);
@@ -51,28 +62,21 @@ exports.retrieveSeqAndIncremement = async (user) => {
 }
 
 exports.retrieveAndModify = async (user, newValue) => {
-  try {
-    const doc = await User.findById(user._id);
-    doc.sequence.current = parseInt(newValue)
-    doc.save();
-    return newValue;
-
-  } catch (err) {
-    console.log('err! ' + err);
-    return err;
-  }
+  const doc = await User.findById(user._id);
+  doc.sequence.current = parseInt(newValue)
+  doc.save((err) => {
+    if (err) console.error(err);
+  });
+  return doc.sequence.toObject();
 }
-exports.retrieveAndModifyInc = async (user, newValue) => {
-  try {
-    const doc = await User.findById(user._id);
-    doc.sequence.increment = parseInt(newValue)
-    doc.save();
-    return newValue;
 
-  } catch (err) {
-    console.log('err! ' + err);
-    return err;
-  }
+exports.retrieveAndModifyInc = async (user, newValue) => {
+  const doc = await User.findById(user._id);
+  doc.sequence.increment = parseInt(newValue)
+  doc.save((err) => {
+    if (err) console.error(err);
+  });
+  return newValue;
 }
 
 
