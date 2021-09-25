@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 const db = require('./mongo')
 
 var userSchema = mongoose.Schema({
-  email: String, //TODO: validation { type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true },
+  email: { type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true },
   password: String,
   sequence: { start: {type: Number, default: 0} , current:{type: Number, default: 0}, increment:{type: Number, default: 1} },
   access_token: String
@@ -10,11 +10,18 @@ var userSchema = mongoose.Schema({
 
 const User = mongoose.model('Users', userSchema);
 
-exports.createUser = (p_user) => {
+exports.createUser = async (p_user) => {
   db.getDatabase()
   const user = new User(p_user);
   return user.save();
 };
+
+exports.logIn = async (user, token) => {
+  const doc = await User.findById(user._id);
+  doc.access_token = token
+  doc.save();
+  return doc.access_token;
+}
 
 exports.listUsers = () => {
   return User.find().then(result => {
@@ -22,7 +29,7 @@ exports.listUsers = () => {
   })
 }
 
-exports.getUserByToken = (token) => {
+exports.getUserByToken = async (token) => {
   return User.findOne({ access_token: token })
 }
 
@@ -44,7 +51,7 @@ exports.reset = async (user) => {
   return doc.sequence.toObject()
 }
 
-exports.retrieveSeqAndIncremement = async (user) => {
+exports.retrieveSeqAndIncrement = async (user) => {
   try {
     // get user object in db
     const doc = await User.findById(user._id);
@@ -74,3 +81,5 @@ exports.retrieveAndModifyInc = async (user, newValue) => {
   });
   return doc.sequence;
 }
+
+
