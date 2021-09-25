@@ -30,7 +30,7 @@ describe('increment twice, reset', () => {
                     headers: { 'authorization': 'Bearer ' + access_token }
                 }).then((resp) => {
                     expect(resp.status).to.eq(201)
-                    expect(resp.body.current).to.eq(1)
+                    expect(resp.body.current).to.eq(0)
                 }).then(() => {
                     cy.request({
                         method: 'GET',

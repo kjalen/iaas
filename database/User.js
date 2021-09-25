@@ -4,7 +4,7 @@ const db = require('./mongo')
 var userSchema = mongoose.Schema({
   email: String, //TODO: validation { type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true },
   password: String,
-  sequence: { start: Number, current: Number, increment: Number },
+  sequence: { start: {type: Number, default: 0} , current:{type: Number, default: 0}, increment:{type: Number, default: 1} },
   access_token: String
 }, { timestamps: true });
 
@@ -13,7 +13,6 @@ const User = mongoose.model('Users', userSchema);
 exports.createUser = (p_user) => {
   db.getDatabase()
   const user = new User(p_user);
-  const returnVal = user.access_token;
   return user.save();
 };
 
@@ -37,6 +36,7 @@ exports.getUserByEmail = (email) => {
 
 exports.reset = async (user) => {
   const doc = await User.findById(user._id);
+  // set current = start to reset value
   doc.sequence.current = doc.sequence.start
   doc.save((err) => {
     if (err) console.error(err);
@@ -48,13 +48,10 @@ exports.retrieveSeqAndIncremement = async (user) => {
   try {
     // get user object in db
     const doc = await User.findById(user._id);
-    // save current user object to variable, to be returned
-    const currentVal = doc.sequence.toObject();
-    // increment current value by adding it to iterator
+    // increment current value by adding it to iterator, and save it
     doc.sequence.current += doc.sequence.increment;
     doc.save();
-    return currentVal
-
+    return doc.sequence
   } catch (err) {
     return err;
   }
@@ -72,25 +69,8 @@ exports.retrieveAndModify = async (user, newValue) => {
 exports.retrieveAndModifyInc = async (user, newValue) => {
   const doc = await User.findById(user._id);
   doc.sequence.increment = parseInt(newValue)
-  // need to increment current because the next /next has to take into account the new incrementer
-  doc.sequence.current += doc.sequence.increment
   doc.save((err) => {
     if (err) console.error(err);
   });
   return doc.sequence;
-}
-
-
-exports.userLogin = (user) => {
-  const filter = { email: user.email };
-  const update = { access_token: user.token }
-  return User.findOneAndUpdate(filter, update, {
-    new: true
-  });
-
-  exports.incrementSeq = (user) => {
-
-  }
-
-
 }

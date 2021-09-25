@@ -38,7 +38,7 @@ describe('increment twice, modify', () => {
                         headers: { 'authorization': 'Bearer ' + access_token }
                     }).then((resp) => {
                         expect(resp.status).to.eq(200)
-                        expect(resp.body.current).to.eq(100)
+                        expect(resp.body.current).to.eq(101)
                     })
                 })
             })

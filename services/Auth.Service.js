@@ -1,6 +1,7 @@
 
 const fetch = require("isomorphic-unfetch")
 require('dotenv').config();
+let url = process.env.AUTH_URL
 
 function getAuth() {
 
@@ -10,10 +11,6 @@ let body = {
     audience: 'https://iaas',
     grant_type: 'client_credentials'
 }
-
-
-
-let url = process.env.AUTH_URL
 
 return fetch(url, {
         method: 'POST',

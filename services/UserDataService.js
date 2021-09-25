@@ -1,20 +1,17 @@
-// ./src/database/ids.js
 const { getDatabase } = require('../database/mongo');
-const { ObjectID } = require('mongodb');
 const UserModel = require('../database/User')
 const dbHandler = require('../database/db-handler')
 const Bcrypt = require("bcryptjs");
 
 
 
-
+// mainly for debugging, gets all user objects currently in db
 async function getAll() {
   const database = await getDatabase();
   return await UserModel.listUsers()
 }
 
 async function findByToken(token) {
-
   token = token.replace('Bearer ', '')
   try {
     const user = await UserModel.getUserByToken(token)
@@ -25,17 +22,10 @@ async function findByToken(token) {
   }
 }
 
-async function findByEmail(email) {
-  return await UserModel.getUserByEmail(email)
-}
-
-// async function retrieveSeqAndIncremement(user) {
-//   return await UserModel.retrieveSeqAndIncremement(user)
-// }
-
 async function retrieveSeqAndIncremement(token) {
   const user = await findByToken(token)
   const result = await UserModel.retrieveSeqAndIncremement(user)
+  console.log(result);
   return result
 }
 
@@ -68,22 +58,10 @@ async function registerUser(user, token) {
   return result;
 }
 
-async function loginUser(user, token) {
-  dbHandler.connect()
-  findByEmail(user.email).then(result => {
-    if (!Bcrypt.compareSync(user.password, result.password)) {
-      return UserModel.userLogin(user)
-    } else {
-      return false;
-    }
-  })
-}
-
 module.exports = {
   registerUser,
   getAll,
   findByToken,
-  loginUser,
   retrieveSeqAndIncremement,
   retrieveSeqAndModify,
   retrieveSeqAndModifyInc,

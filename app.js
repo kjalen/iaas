@@ -35,8 +35,6 @@ app.use(errorController);
 
 app.post('/register', async (req, res) => {
   getAuth().then(data => {
-    let startSequence = { "start": 1, "current": 1, "increment": 1 }
-    req.body.sequence = startSequence
     registerUser(req.body, data.access_token).then(result => {
       res.status(201).json({'access_token' : result.access_token});
     })
