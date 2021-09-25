@@ -37,6 +37,7 @@ app.post('/register', async (req, res) => {
         console.error(err);
         res.sendStatus(422); // If i attach a message to this send i get ERR_HTTP_HEADERS_SENT, somehow it's sending this twice
       } else {
+        console.error(err);
         res.sendStatus(500);
       }
     })
@@ -75,6 +76,7 @@ app.put('/reset', jwtCheck, async (req, res) => {
     // decided between sending an empty body with 204, but i thought sending the new value as a confirmation was more useful
     res.status(201).json({ 'current': result });
   } catch (err) {
+    console.error(err);
     res.sendStatus(500);
   }
 })
@@ -90,6 +92,7 @@ app.put('/modify/:newvalue', jwtCheck, async (req, res) => {
     // decided between sending an empty body with 204, but i thought sending the new object as a confirmation was more useful
     res.status(201).json(result);
   } catch (err) {
+    console.error(err);
     res.sendStatus(500);
   }
 });
@@ -104,6 +107,7 @@ app.put('/modifyinc/:newinc', jwtCheck, async (req, res) => {
     // decided between sending an empty body with 204, but i thought sending the new value as a confirmation was more useful
     res.status(201).json(result)
   } catch (err) {
+    console.error(err);
     res.sendStatus(500)
   }
 })

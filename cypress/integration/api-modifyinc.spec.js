@@ -3,7 +3,7 @@ describe('increment twice, modifies incrementer, increments once', () => {
         cy.request({
             method: 'POST',
             url: `localhost:8080/register`,
-            body: { "email": "kjalen@gmail.com", "password": "testpass" },
+            body: { "email": "kjalen3@gmail.com", "password": "testpass" },
         }).then(({ body }) => {
             return body.access_token
         }).then((access_token) => {

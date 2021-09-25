@@ -8,8 +8,7 @@
   },
   "scripts": {
     "cy:run": "cypress run",
-    "test": "npm start & wait-on http://localhost:8080 & cypress open",
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "cy:open": "cypress open"
   },
   "keywords": [],
