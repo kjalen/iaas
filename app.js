@@ -121,11 +121,7 @@ app.get('/', jwtCheck, async (req, res) => {
 startDatabase().then(async () => {
 
   // start the server
-  let port = process.env.PORT;
- if (port == null || port == "") {
-   port = 8080;
- }
-  app.listen(port, async () => {
-    console.log(`listening on port ${port}`);
+  app.listen(8080, async () => {
+    console.log('listening on port 8080');
   });
 });
