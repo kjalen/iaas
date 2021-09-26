@@ -1,6 +1,5 @@
-const { getDatabase } = require('../database/mongo');
 const UserModel = require('../database/User')
-const dbHandler = require('../database/db-handler')
+const dbHandler = require('../database/mongo')
 const Bcrypt = require("bcryptjs");
 
 /**
@@ -42,7 +41,6 @@ async function loginUser(user, newToken) {
  * @return {userSchema} The entire userschema collections
  */
 async function getAll() {
-  const database = await getDatabase();
   return await UserModel.listUsers()
 }
 
