@@ -119,9 +119,8 @@ app.get('/', jwtCheck, async (req, res) => {
 
 // start the in-memory MongoDB instance
 startDatabase().then(async () => {
-
-  // start the server
-  app.listen(8080, async () => {
-    console.log('listening on port 8080');
+  let port = process.env.PORT || 8080
+  app.listen(port, async () => {
+    console.log(`listening on port ${port}`);
   });
 });
