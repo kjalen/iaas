@@ -10,6 +10,7 @@ var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 const errorController = require('./controller/error.controller');
 const app = express();
+const TOKEN_EXPIRATION=36000 // jwt token expiration time in seconds
 
 var jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
@@ -31,7 +32,7 @@ app.use(errorController);
 app.post('/register', async (req, res) => {
   getAuth().then(data => {
     registerUser(req.body, data.access_token).then(result => {
-      res.status(201).json({ 'access_token': result.access_token, 'token_type': 'bearer', 'expires_in': process.env.TOKEN_EXPIRATION });
+      res.status(201).json({ 'access_token': result.access_token, 'token_type': 'bearer', 'expires_in': TOKEN_EXPIRATION });
     }).catch((err) => {
       if (err.name === 'ValidationError') {
         console.error(err);
