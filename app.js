@@ -31,7 +31,7 @@ app.use(errorController);
 app.post('/register', async (req, res) => {
   getAuth().then(data => {
     registerUser(req.body, data.access_token).then(result => {
-      res.status(201).json({ 'access_token': result.access_token });
+      res.status(201).json({ 'access_token': result.access_token, 'token_type': 'bearer', 'expires_in': process.env.TOKEN_EXPIRATION });
     }).catch((err) => {
       if (err.name === 'ValidationError') {
         console.error(err);
